@@ -1,0 +1,23 @@
+==================================================
+EWALUACJA MODELU NA ZBIORZE TESTOWYM
+==================================================
+
+Zbiór danych: IRIS
+Parametry: TEST_SIZE=0.2, RANDOM_SEED=42
+
+MODEL: DRZEWO DECYZYJNE (DecisionTreeClassifier)
+--------------------------------------------------
+Accuracy Score: 0.9333
+
+Classification Report:
+              precision    recall  f1-score   support
+
+      setosa       1.00      1.00      1.00        10
+  versicolor       0.90      0.90      0.90        10
+   virginica       0.90      0.90      0.90        10
+
+    accuracy                           0.93        30
+   macro avg       0.93      0.93      0.93        30
+weighted avg       0.93      0.93      0.93        30
+
+==================================================
