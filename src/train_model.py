@@ -48,7 +48,7 @@ def main():
     # 4. Predykcja na zbiorze testowym
     y_pred_dt = dt_model.predict(X_test)
 
-    # 5. Wyliczenie metryk
+    # 5. Wyliczenie metryk i utworzenie raportu klasyfikacji
     acc_dt = accuracy_score(y_test, y_pred_dt)
     report_dt = classification_report(y_test, y_pred_dt, target_names=target_names)
 
