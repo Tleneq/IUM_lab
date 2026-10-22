@@ -23,3 +23,38 @@ Confusion Matrix:
  [ 0 14  0]
  [ 0  1  9]]
 ============================================================
+
+============================================================
+EWALUACJA MODELU PYTORCH (ZADANIE 3)
+============================================================
+Model: WineClassifier (nn.Module: Linear(13->32) -> ReLU -> Linear(32->16) -> ReLU -> Linear(16->3))
+Funkcja straty: CrossEntropyLoss | Optymalizator: Adam(lr=0.01)
+Liczba epok: 60 | RANDOM_SEED=42
+Rozmiar zbioru testowego: 36 próbek
+------------------------------------------------------------
+>>> ACCURACY SCORE (PyTorch): 0.9722 (97.22%) <<<
+------------------------------------------------------------
+Classification Report:
+              precision    recall  f1-score   support
+
+     class_0       1.00      1.00      1.00        12
+     class_1       0.93      1.00      0.97        14
+     class_2       1.00      0.90      0.95        10
+
+    accuracy                           0.97        36
+   macro avg       0.98      0.97      0.97        36
+weighted avg       0.97      0.97      0.97        36
+
+Confusion Matrix:
+[[12  0  0]
+ [ 0 14  0]
+ [ 0  1  9]]
+============================================================
+
+============================================================
+PORÓWNANIE MODELI (ZADANIE 2 vs ZADANIE 3)
+============================================================
+Zbiór danych: WINE (13 cech, 3 klasy)
+- Model 1 (scikit-learn - LogisticRegression):  0.9722 (97.22%)
+- Model 2 (PyTorch - WineClassifier MLP):        0.9722 (97.22%)
+============================================================
