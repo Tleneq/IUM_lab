@@ -1,23 +1,25 @@
-==================================================
-EWALUACJA MODELU NA ZBIORZE TESTOWYM
-==================================================
-
-Zbiór danych: IRIS
-Parametry: TEST_SIZE=0.2, RANDOM_SEED=42
-
-MODEL: DRZEWO DECYZYJNE (DecisionTreeClassifier)
---------------------------------------------------
-Accuracy Score: 0.9333
-
+============================================================
+EWALUACJA MODELU SCIKIT-LEARN (BASELINE - ZADANIE 2)
+============================================================
+Pipeline: StandardScaler -> LogisticRegression
+Parametry: RANDOM_SEED=42
+Rozmiar zbioru testowego: 36 próbek
+------------------------------------------------------------
+>>> ACCURACY SCORE (punkt odniesienia): 0.9722 (97.22%) <<<
+------------------------------------------------------------
 Classification Report:
               precision    recall  f1-score   support
 
-      setosa       1.00      1.00      1.00        10
-  versicolor       0.90      0.90      0.90        10
-   virginica       0.90      0.90      0.90        10
+     class_0       1.00      1.00      1.00        12
+     class_1       0.93      1.00      0.97        14
+     class_2       1.00      0.90      0.95        10
 
-    accuracy                           0.93        30
-   macro avg       0.93      0.93      0.93        30
-weighted avg       0.93      0.93      0.93        30
+    accuracy                           0.97        36
+   macro avg       0.98      0.97      0.97        36
+weighted avg       0.97      0.97      0.97        36
 
-==================================================
+Confusion Matrix:
+[[12  0  0]
+ [ 0 14  0]
+ [ 0  1  9]]
+============================================================
