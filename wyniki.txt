@@ -52,15 +52,8 @@ Confusion Matrix:
 ============================================================
 
 ============================================================
-PORÓWNANIE MODELI (ZADANIE 2 vs ZADANIE 3)
-============================================================
-Zbiór danych: WINE (13 cech, 3 klasy)
-- Model 1 (scikit-learn - LogisticRegression):  0.9722 (97.22%)
-- Model 2 (PyTorch - WineClassifier MLP):        0.9722 (97.22%)
-============================================================
-
-============================================================
 WALIDACJA KRZYŻOWA SCIKIT-LEARN (ZADANIE 4)
+============================================================
 Pipeline: StandardScaler -> LogisticRegression
 Metoda: KFold (n_splits=5, shuffle=True, random_state=42)
 Zbiór: Treningowy z Zadania 1 (142 próbek)
@@ -78,6 +71,7 @@ Wyniki dla poszczególnych foldów:
 
 ============================================================
 WALIDACJA KRZYŻOWA PYTORCH (ZADANIE 5)
+============================================================
 Model: WineClassifier (nn.Module - nowa instancja na każdy fold)
 Metoda: Ręczny KFold (n_splits=5, shuffle=True, random_state=42)
 Trening: 60 epok, Adam(lr=0.01), CrossEntropyLoss
@@ -93,4 +87,54 @@ Wyniki dla poszczególnych foldów:
 ------------------------------------------------------------
 >>> ŚREDNIA DOKŁADNOŚĆ (Mean CV Accuracy): 0.9793 (97.93%) <<<
 >>> ODCHYLENIE STANDARDOWE (Std Dev):    0.0276 (±2.76%) <<<
+============================================================
+
+============================================================
+ZADANIE 6: ZESTAWIENIE WYNIKÓW I PORÓWNANIE MODELI
+============================================================
+
+1. TABELA WYNIKÓW WALIDACJI KRZYŻOWEJ (5-Fold CV):
++-------------------------------+--------------------------+--------------------------+
+| Metryka (5-Fold CV)           | scikit-learn (Pipeline)  | PyTorch (WineClassifier) |
++-------------------------------+--------------------------+--------------------------+
+| Dokładność (Mean ± Std)       | 0.9862 ± 0.0169 (98.62%) | 0.9793 ± 0.0276 (97.93%) |
+| Precyzja macro (Mean ± Std)   | 0.9865 ± 0.0166 (98.65%) | 0.9785 ± 0.0293 (97.85%) |
+| Czułość macro (Mean ± Std)    | 0.9882 ± 0.0146 (98.82%) | 0.9831 ± 0.0215 (98.31%) |
+| F1-score macro (Mean ± Std)   | 0.9867 ± 0.0163 (98.67%) | 0.9796 ± 0.0270 (97.96%) |
+| Zbiór testowy (Hold-out Acc)  | 0.9722 (97.22%)          | 0.9722 (97.22%)          |
++-------------------------------+--------------------------+--------------------------+
+
+2. PORÓWNANIE CZASU I NAKŁADU PRACY (KOD / KONFIGURACJA):
++-------------------------------+--------------------------+--------------------------+
+| Aspekt                        | scikit-learn             | PyTorch                  |
++-------------------------------+--------------------------+--------------------------+
+| Czas 1 treningu (fit)         | ~0.044 s                 | ~0.266 s (~6x dłuższy)   |
+| Czas 5-krotnej CV             | ~0.197 s                 | ~0.844 s (~4.3x dłuższy) |
+| Linie kodu (skrypt modułu)    | ~150 linii               | ~265 linii (~1.8x więcej)|
+| Liczba hiperparametrów        | minimalna (C, max_iter)  | liczna (epoki, lr, sieć) |
+| Wbudowana obsługa CV / Scaler | TAK (Pipeline, KFold)    | NIE (wymaga pętli i skal)|
+| Zarządzanie pamięcią / urządzeniami| automatyczne         | tensory, .to(device)     |
++-------------------------------+--------------------------+--------------------------+
+
+3. WNIOSKI KOŃCOWE:
+Na zbiorze danych Wine (178 próbek, 13 cech tabelarycznych) LEPIEJ SPRAWDZIŁ SIĘ
+model scikit-learn (Pipeline ze StandardScaler i LogisticRegression):
+
+a) Wyższa jakość predykcji w walidacji krzyżowej:
+   - scikit-learn osiągnął średnią dokładność 98.62% (±1.69%) wobec 97.93% (±2.76%)
+     w PyTorch. Niższe odchylenie standardowe wskazuje na większą stabilność modelu.
+
+b) Znacząca przewaga wydajnościowa i czasowa:
+   - Czas treningu scikit-learn był ok. 4-6 razy krótszy ze względu na dedykowane,
+     zoptymalizowane solvery numeryczne (L-BFGS) do regresji logistycznej.
+
+c) Prostota implementacji i mniejsze ryzyko błędów:
+   - scikit-learn dostarcza gotowy obiekt Pipeline, który hermetyzuje proces skalowania
+     i chroni przed wyciekiem danych (data leakage) w jednej linijce kodu.
+   - W PyTorch konieczne było manualne zdefiniowanie klasy nn.Module, pętli epok,
+     zerowania gradientów, tensoryzacji danych oraz ręcznego zarządzania KFoldem
+     z reinicjalizacją sieci w każdym foldzie.
+
+Podsumowanie: Dla małych i średnich zbiorów tabelarycznych klasyczne modele scikit-learn
+są rozwiązaniem efektywniejszym, szybszym i łatwiejszym w utrzymaniu niż głębokie sieci neuronowe.
 ============================================================
