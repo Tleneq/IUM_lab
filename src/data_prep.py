@@ -27,16 +27,25 @@ def load_data(path: Union[str, Path, None] = None) -> pd.DataFrame:
 
     Raises:
         FileNotFoundError: Gdy wskazany plik nie istnieje.
+        TypeError: Gdy wczytany obiekt nie jest ramką DataFrame.
     """
     if path is None:
         load_dotenv()
-        path = os.getenv("DATA_PATH", "data/wine.csv")
+        env_path = os.getenv("DATA_PATH")
+        file_path = Path(env_path) if env_path else Path("data/wine.csv")
+    elif isinstance(path, Path):
+        file_path = path
+    else:
+        file_path = Path(path)
 
-    file_path = Path(path)
     if not file_path.exists():
         raise FileNotFoundError(f"Plik danych nie został znaleziony: {file_path}")
 
-    return pd.read_csv(file_path)
+    df = pd.read_csv(file_path)
+    if not isinstance(df, pd.DataFrame):
+        raise TypeError(f"Oczekiwano typu pandas.DataFrame, otrzymano: {type(df)}")
+
+    return df
 
 
 def split_data(
