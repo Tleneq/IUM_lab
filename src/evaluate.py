@@ -1,6 +1,7 @@
 """Moduł do ewaluacji zapisanego modelu scikit-learn (evaluate.py).
 
-Zadanie 3:
+Zadanie 3 i Zadanie 4:
+Wszystkie parametry (ścieżki, ziarno losowości) wczytywane są z pliku .env za pomocą python-dotenv.
 Wczytuje wcześniej wytrenowany model z katalogu models/ (.joblib) oraz dane testowe
 z modułu data_prep.py, oblicza metryki (accuracy_score, classification_report, confusion_matrix)
 i zapisuje podsumowanie do pliku (wyniki.txt). Skrypt działa w pełni samodzielnie,
@@ -26,12 +27,21 @@ for path_entry in (current_dir, parent_dir):
 
 from data_prep import load_data, split_data
 
+# Wczytanie konfiguracji z pliku .env na poziomie modułu
+load_dotenv()
 
-def load_model(model_path: Union[str, Path] = "models/model.joblib") -> Any:
+DEFAULT_DATA_PATH = os.getenv("DATA_PATH", "data/wine.csv")
+DEFAULT_TEST_SIZE = float(os.getenv("TEST_SIZE", "0.2"))
+DEFAULT_RANDOM_SEED = int(os.getenv("RANDOM_SEED", "42"))
+DEFAULT_MODEL_PATH = os.getenv("MODEL_PATH", "models/model.joblib")
+DEFAULT_RESULTS_PATH = os.getenv("RESULTS_PATH", "wyniki.txt")
+
+
+def load_model(model_path: Union[str, Path, None] = None) -> Any:
     """Wczytuje wytrenowany model z pliku .joblib.
 
     Args:
-        model_path: Ścieżka do zapisanego modelu.
+        model_path: Ścieżka do zapisanego modelu. Jeśli None, pobiera MODEL_PATH z .env.
 
     Returns:
         Wczytany obiekt modelu / pipeline.
@@ -39,7 +49,8 @@ def load_model(model_path: Union[str, Path] = "models/model.joblib") -> Any:
     Raises:
         FileNotFoundError: Gdy plik modelu nie istnieje.
     """
-    file_path = model_path if isinstance(model_path, Path) else Path(model_path)
+    target = DEFAULT_MODEL_PATH if model_path is None else model_path
+    file_path = target if isinstance(target, Path) else Path(str(target))
     if not file_path.exists():
         raise FileNotFoundError(
             f"Plik modelu nie został znaleziony: {file_path}. Uruchom najpierw train.py."
@@ -95,9 +106,10 @@ def format_results(
     return "\n".join(lines)
 
 
-def save_results(result_text: str, results_path: Union[str, Path] = "wyniki.txt") -> Path:
+def save_results(result_text: str, results_path: Union[str, Path, None] = None) -> Path:
     """Zapisuje raport ewaluacji do pliku tekstowego."""
-    file_path = results_path if isinstance(results_path, Path) else Path(results_path)
+    target = DEFAULT_RESULTS_PATH if results_path is None else results_path
+    file_path = target if isinstance(target, Path) else Path(str(target))
     file_path.parent.mkdir(parents=True, exist_ok=True)
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(result_text + "\n")
@@ -106,32 +118,24 @@ def save_results(result_text: str, results_path: Union[str, Path] = "wyniki.txt"
 
 def main() -> None:
     """Główna funkcja wykonująca ewaluację zapisanego modelu bez trenowania."""
-    load_dotenv()
-
-    data_path = os.getenv("DATA_PATH", "data/wine.csv")
-    test_size = float(os.getenv("TEST_SIZE", "0.2"))
-    random_seed = int(os.getenv("RANDOM_SEED", "42"))
-    model_path = os.getenv("MODEL_PATH", "models/model.joblib")
-    results_path = os.getenv("RESULTS_PATH", "wyniki.txt")
-
     print("=" * 60)
     print("ETAP: EWALUACJA MODELU (evaluate.py)")
     print("=" * 60)
-    print(f"Ścieżka modelu: {model_path}")
-    print(f"Ścieżka danych: {data_path}")
-    print(f"Ścieżka zapisu wyników: {results_path}")
+    print(f"Ścieżka modelu: {DEFAULT_MODEL_PATH}")
+    print(f"Ścieżka danych: {DEFAULT_DATA_PATH}")
+    print(f"Ścieżka zapisu wyników: {DEFAULT_RESULTS_PATH}")
     print("-" * 60)
 
-    # 1. Wczytanie zapisanego modelu z katalogu models/ (bez trenowania!)
-    model = load_model(model_path)
+    # 1. Wczytanie zapisanego modelu z katalogu models/ (bez ponownego trenowania)
+    model = load_model(DEFAULT_MODEL_PATH)
     print("Pomyślnie załadowano model z dysku.")
 
     # 2. Pobranie danych testowych za pomocą data_prep
-    df = load_data(data_path)
+    df = load_data(DEFAULT_DATA_PATH)
     _, X_test, _, y_test = split_data(
         df=df,
-        test_size=test_size,
-        seed=random_seed,
+        test_size=DEFAULT_TEST_SIZE,
+        seed=DEFAULT_RANDOM_SEED,
     )
     print(f"Wczytano zbiór testowy: {X_test.shape[0]} próbek, {X_test.shape[1]} cech")
 
@@ -153,7 +157,7 @@ def main() -> None:
     )
     print("\n" + report_text)
 
-    saved_file = save_results(report_text, results_path)
+    saved_file = save_results(report_text, DEFAULT_RESULTS_PATH)
     print(f"\nWyniki ewaluacji zapisano pomyślnie do: {saved_file.resolve()}")
     print("=" * 60)
 
