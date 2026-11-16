@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    environment:
+      - GREETING=Witaj z Docker Compose!
+      - SLEEP_SECONDS=60
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/data

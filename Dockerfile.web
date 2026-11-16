@@ -1,0 +1,12 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Kopiowanie statycznego pliku HTML
+COPY web/index.html ./index.html
+
+# Dokumentacja portu
+EXPOSE 8000
+
+# Domyślne polecenie serwera HTTP
+CMD ["python", "-m", "http.server", "8000"]

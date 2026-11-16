@@ -1,0 +1,26 @@
+# Środowisko wirtualne i biblioteki
+.venv/
+venv/
+env/
+
+# Pamięć podręczna Pythona i kompilaty
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Kontrola wersji
+.git/
+.gitignore
+.gitattributes
+
+# Konfiguracje IDE
+.idea/
+.vscode/
+
+# Specyficzne dla projektu / zbędne w obrazie aplikacyjnym
+.agents/
+.gemini/
+models/
+notebooks/
+*.log
