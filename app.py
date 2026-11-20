@@ -25,7 +25,7 @@ def main():
         print(f"[Ostrzeżenie] Nie można zapisać do {data_dir_path} ({e}). Zapisano w {fallback_file}", file=sys.stderr, flush=True)
 
     # Opcjonalne uśpienie dla testowania kontenera w tle (docker run -d / docker ps / docker stop)
-    sleep_seconds = int(os.getenv("SLEEP_SECONDS", "0"))
+    sleep_seconds = int(os.getenv("SLEEP_SECONDS", "60"))
     if sleep_seconds > 0:
         time.sleep(sleep_seconds)
 
