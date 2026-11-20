@@ -1,7 +1,7 @@
 """Moduł do ewaluacji zapisanego modelu scikit-learn (evaluate.py).
 
 Zadanie 3 i Zadanie 4:
-Wszystkie parametry (ścieżki, ziarno losowości) wczytywane są z pliku .env za pomocą python-dotenv.
+Wszystkie parametry (ścieżki, ziarno losowości) wczytywane są z pliku .env / .env.train za pomocą python-dotenv.
 Wczytuje wcześniej wytrenowany model z katalogu models/ (.joblib) oraz dane testowe
 z modułu data_prep.py, oblicza metryki (accuracy_score, classification_report, confusion_matrix)
 i zapisuje podsumowanie do pliku (wyniki.txt). Skrypt działa w pełni samodzielnie,
@@ -30,11 +30,11 @@ from data_prep import load_data, split_data
 # Wczytanie konfiguracji z pliku .env na poziomie modułu
 load_dotenv()
 
-DEFAULT_DATA_PATH = os.getenv("DATA_PATH", "data/wine.csv")
-DEFAULT_TEST_SIZE = float(os.getenv("TEST_SIZE", "0.2"))
-DEFAULT_RANDOM_SEED = int(os.getenv("RANDOM_SEED", "42"))
-DEFAULT_MODEL_PATH = os.getenv("MODEL_PATH", "models/model.joblib")
-DEFAULT_RESULTS_PATH = os.getenv("RESULTS_PATH", "wyniki.txt")
+DEFAULT_DATA_PATH = os.getenv("DATA_PATH") or "data/wine.csv"
+DEFAULT_TEST_SIZE = float(os.getenv("TEST_SIZE") or "0.2")
+DEFAULT_RANDOM_SEED = int(os.getenv("RANDOM_SEED") or "42")
+DEFAULT_MODEL_PATH = os.getenv("MODEL_PATH") or "models/model.joblib"
+DEFAULT_RESULTS_PATH = os.getenv("RESULTS_PATH") or "wyniki.txt"
 
 
 def load_model(model_path: Union[str, Path, None] = None) -> Any:

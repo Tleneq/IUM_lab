@@ -1,0 +1,46 @@
+# ==============================================================================
+# Docker Compose - Wielousługowy Potok ML (Lab 5, Zadania 2, 4, 6)
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # Usługa 1: Trening i ewaluacja potoku ML
+  # ----------------------------------------------------------------------------
+  train:
+    build: .
+    container_name: ium-train
+    env_file: .env.train
+    volumes:
+      # Montowanie katalogów z repozytorium jako wolumeny (trwałość artefaktów na hoście)
+      - ../data:/app/data:ro
+      - ../models:/app/models
+      - ../wyniki.txt:/app/wyniki.txt
+    ports:
+      # Port statusu HTTP (dostępny w sieci kontenerów i dla debugowania z hosta)
+      - "5000:5000"
+    # Zadanie 4: Ograniczenie zasobów pamięci RAM i procesora
+    mem_limit: 1g
+    cpus: 1.5
+
+  # ----------------------------------------------------------------------------
+  # Usługa 2: Panel wizualizacji wyników i weryfikacja komunikacji sieciowej
+  # ----------------------------------------------------------------------------
+  visualize:
+    build: ./visualize
+    container_name: ium-visualize
+    ports:
+      # Mapowanie portu serwera HTTP na port hosta
+      - "8080:8080"
+    # Zadanie 4: Kolejność startu kontenerów
+    depends_on:
+      - train
+    volumes:
+      # Dostęp w trybie tylko do odczytu do artefaktów wygenerowanych przez train
+      - ../models:/app/models:ro
+      - ../wyniki.txt:/app/wyniki.txt:ro
+    environment:
+      # Adresowanie usługi po nazwie w domyślnej sieci compose (Zadanie 6)
+      - TRAIN_HOST=train
+      - TRAIN_PORT=5000
+      - RESULTS_FILE=/app/wyniki.txt
+      - MODEL_FILE=/app/models/model.joblib

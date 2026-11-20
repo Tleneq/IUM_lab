@@ -16,10 +16,10 @@ from sklearn.model_selection import train_test_split
 # Wczytanie konfiguracji z pliku .env na poziomie modułu
 load_dotenv()
 
-DEFAULT_DATA_PATH = os.getenv("DATA_PATH", "data/wine.csv")
-DEFAULT_TEST_SIZE = float(os.getenv("TEST_SIZE", "0.2"))
-DEFAULT_RANDOM_SEED = int(os.getenv("RANDOM_SEED", "42"))
-DEFAULT_DATA_DIR = Path(os.getenv("DATA_DIR", "data"))
+DEFAULT_DATA_PATH = os.getenv("DATA_PATH") or "data/wine.csv"
+DEFAULT_TEST_SIZE = float(os.getenv("TEST_SIZE") or "0.2")
+DEFAULT_RANDOM_SEED = int(os.getenv("RANDOM_SEED") or "42")
+DEFAULT_DATA_DIR = Path(os.getenv("DATA_DIR") or "data")
 
 
 def load_data(path: Union[str, Path, None] = None) -> pd.DataFrame:
@@ -28,7 +28,7 @@ def load_data(path: Union[str, Path, None] = None) -> pd.DataFrame:
     Funkcja nie posiada efektów ubocznych (brak printów i zapisu do pliku).
 
     Args:
-        path: Ścieżka do pliku z danymi (np. CSV). Jeśli None, pobiera DATA_PATH z .env.
+        path: Ścieżka do pliku z danymi (np. CSV). Jeśli None lub puste, pobiera DATA_PATH z .env.
 
     Returns:
         pd.DataFrame: Wczytane dane.
@@ -37,7 +37,7 @@ def load_data(path: Union[str, Path, None] = None) -> pd.DataFrame:
         FileNotFoundError: Gdy wskazany plik nie istnieje.
         TypeError: Gdy wczytany obiekt nie jest ramką DataFrame.
     """
-    if path is None:
+    if path is None or (isinstance(path, str) and path.strip() == ""):
         target_path = DEFAULT_DATA_PATH
     elif isinstance(path, Path):
         target_path = str(path)

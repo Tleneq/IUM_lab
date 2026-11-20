@@ -1,0 +1,34 @@
+# ==============================================================================
+# .dockerignore - Wykluczenia z kontekstu budowania obrazu (Lab 5, Zadanie 5)
+# ==============================================================================
+
+# Lokalne środowisko wirtualne
+.venv/
+venv/
+env/
+
+# Pamięć podręczna Pythona i pliki kompilacji
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Kontrola wersji
+.git/
+.gitignore
+.gitattributes
+
+# Dane treningowe i modele (dostarczane przez wolumeny w czasie uruchomienia)
+data/
+models/
+notebooks/
+
+# Logi i pliki wynikowe
+*.log
+wyniki.txt
+
+# Konfiguracje IDE
+.idea/
+.vscode/
+.agents/
+.gemini/
