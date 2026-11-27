@@ -1,0 +1,60 @@
+name: CI
+
+# Wyzwalacze: automatyczne uruchamianie przy pushu do gałęzi main oraz dla pull requestów (Zadanie 1)
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    name: Build, Test & Train
+    runs-on: ubuntu-latest
+
+    # Środowisko wykonawcze: obraz Dockera z lab. 4/5 zapewniający spójne środowisko (Zadanie 1)
+    container:
+      image: python:3.11-slim
+
+    steps:
+      # Krok 1: Pobranie kodu repozytorium
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      # Krok 2: Cache zależności pip przyspieszający kolejne przebiegi CI (Zadanie 2)
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      # Krok 3: Instalacja zależności projektu
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Krok 4: Uruchomienie testów jednostkowych (Zasada Fail Fast - testy przed treningiem) (Zadanie 1, 4)
+      - name: Run unit tests with pytest
+        run: pytest
+
+      # Krok 5: Trening modelu i ewaluacja potoku ML z wstrzykniętym sekretem API_KEY (Zadanie 2, 3)
+      - name: Train and evaluate ML model
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
+          DATA_PATH: data/wine.csv
+          MODEL_PATH: models/model.joblib
+          RESULTS_PATH: wyniki.txt
+          MODEL_TYPE: logistic_regression
+          RANDOM_SEED: 42
+        run: python src/train.py
+
+      # Krok 6: Zapisanie wytrenowanego modelu jako artefaktu przebiegu (Zadanie 2)
+      - name: Upload trained model artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: trained-model-joblib
+          path: models/model.joblib
+          retention-days: 7
