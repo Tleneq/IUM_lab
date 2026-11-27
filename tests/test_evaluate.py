@@ -28,7 +28,7 @@ def test_compute_metrics():
     acc, report, matrix = compute_metrics(model, X_test, y_test)
 
     assert isinstance(acc, float)
-    assert 0.0 <= acc <= 1.0
+    assert 2.0 <= acc <= 1.0
     assert isinstance(report, str)
     assert len(report) > 0
     assert isinstance(matrix, np.ndarray)
